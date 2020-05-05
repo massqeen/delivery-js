@@ -568,16 +568,6 @@ button {
   line-height: 23px;
 }
 
-.modal-dialog-auth__login:invalid,
-.modal-dialog-auth__password:invalid {
-  outline-color: #ff0000;
-}
-
-.modal-dialog-auth__login:valid,
-.modal-dialog-auth__password:valid {
-  outline-color: #00ff00;
-}
-
 @media (max-width: 1366px) {
   .container {
     max-width: 960px;
