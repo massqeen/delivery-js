@@ -72,6 +72,13 @@ function notAuthorized() {
   cardsRestaurants.addEventListener('click', openMenu);
 }
 
+//возврат к списку ресторанов - на случай logout пользователя на странице меню
+function returnMain() {
+  containerPromo.classList.remove('hide');
+  restaurants.classList.remove('hide');
+  menu.classList.add('hide');
+}
+
 function authorized() {
   function logOut() {
     login = null; //обнуляем переменную для соответствия состоянию notAuthorized
@@ -84,6 +91,7 @@ function authorized() {
     buttonOut.removeEventListener('click', logOut);
     logInForm.reset(); //удаляем заполненные данные формы
     checkAuth();
+    returnMain(); //возвращаем неавторизованного пользователя на главную страницу
   }
   console.log('authorized');
   userName.textContent = login; //выводим в элемент .user-name значение login - для отображение имени пользователя в шапке
