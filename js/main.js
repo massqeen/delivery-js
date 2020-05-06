@@ -153,26 +153,29 @@ function createCardGood() {
 
 //моделируем переход на страницу с товарами выбранного ресторана, 
 function openGoods(event) {
-  const target = event.target; //элемент, по которому кликнули мышью
-  
-  /*closest поднимается выше по дереву в поисках элемента с заданным селектором
-  - нужно получить карточку ресторана*/
-  const restaurant = target.closest('.card-restaurant');
 
-  //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
-  if (restaurant) {
-    cardsMenu.textContent = '';
+  if (login) {
+    const target = event.target; //элемент, по которому кликнули мышью
 
-    //фактически на главной странице скрываем ненужные элементы и показываем нужные
-    containerPromo.classList.add('hide');
-    restaurants.classList.add('hide');
-    menu.classList.remove('hide');
+    /*closest поднимается выше по дереву в поисках элемента с заданным селектором
+    - нужно получить карточку ресторана*/
+    const restaurant = target.closest('.card-restaurant');
 
-    //создаем карточки товаров в меню ресторана
-    createCardGood();
-    createCardGood();
-    createCardGood();
-  }
+    //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
+    if (restaurant) {
+      cardsMenu.textContent = '';
+
+      //фактически на главной странице скрываем ненужные элементы и показываем нужные
+      containerPromo.classList.add('hide');
+      restaurants.classList.add('hide');
+      menu.classList.remove('hide');
+
+      //создаем карточки товаров в меню ресторана
+      createCardGood();
+      createCardGood();
+      createCardGood();
+    }
+  } else toggleModalAuth();
 }
 
 cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
