@@ -154,7 +154,7 @@ function createCardGood() {
 //моделируем переход на страницу с товарами выбранного ресторана, 
 function openGoods(event) {
 
-  if (login) {
+  if (login) { //открываем карточки меню только для авторизованного пользователя
     const target = event.target; //элемент, по которому кликнули мышью
 
     /*closest поднимается выше по дереву в поисках элемента с заданным селектором
@@ -175,7 +175,7 @@ function openGoods(event) {
       createCardGood();
       createCardGood();
     }
-  } else toggleModalAuth();
+  } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации
 }
 
 cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
@@ -183,7 +183,7 @@ cartButton.addEventListener('click', toggleModal); //при клике на ко
 close.addEventListener('click', toggleModal); //при клике на крестик закрываем окно корзины
 
 //при клике на карточку ресторана открываем карточки с его меню
-cardsRestaurants.addEventListener('click', openGoods); 
+cardsRestaurants.addEventListener('click', openGoods);
 
 //возврат к главной странице по клику на лого в шапке
 logo.addEventListener('click', function () {
