@@ -24,6 +24,11 @@ const cardsMenu = document.querySelector('.cards-menu');
 - на случай обновления страницы*/
 let login = localStorage.getItem('deliveryFood');
 
+const valid = function (str) { //идентично записи function valid(str) {}
+  const nameReg = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/; //валидация имени пользователя
+  return nameReg.test(str);
+}
+
 //выводим на экран модальное окно корзины
 function toggleModal() {
   modal.classList.toggle("is-open");
@@ -42,7 +47,7 @@ function notAuthorized() {
   function logIn(event) {
     event.preventDefault(); //запрещаем обновлять страницу при нажатии submit
     //проверяем, не пустое ли поле логина (так же обрезаем пробелы)
-    if (loginInput.value.trim()) {
+    if (valid(loginInput.value.trim())) { //валидируем имя пользователя функцией valid()
       login = loginInput.value; //получаем данные из поля логина после нажатия submit
       localStorage.setItem('deliveryFood', login); //записываем логин в localStorage
       toggleModalAuth(); //закрываем окно авторизации
@@ -55,7 +60,6 @@ function notAuthorized() {
     } else {
       loginInput.style.borderColor = '#cc3f71'; //ошибка в поле логина - пустое или с пробелами
       loginInput.style.borderRadius = '3px';
-
     }
   }
 
