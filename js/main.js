@@ -55,16 +55,17 @@ function notAuthorized() {
     } else {
       loginInput.style.borderColor = '#cc3f71'; //ошибка в поле логина - пустое или с пробелами
       loginInput.style.borderRadius = '3px';
-      
+
     }
   }
+
   function openMenu(event) {
     console.log('test');
   }
   buttonAuth.addEventListener('click', toggleModalAuth); //выводим окно авторизации при клике на кнопку Войти
   closeAuth.addEventListener('click', toggleModalAuth); //закрываем окно авторизации при клике на крестик
   logInForm.addEventListener('submit', logIn); //авторизуем пользователя и выполняем функцию logIn
-cardsRestaurants.addEventListener('click', openMenu);
+  cardsRestaurants.addEventListener('click', openMenu);
 }
 
 function authorized() {
@@ -158,30 +159,30 @@ function createCardGood() {
 
 //моделируем переход на страницу с товарами выбранного ресторана, 
 function openGoods(event) {
-    const target = event.target; //элемент, по которому кликнули мышью
+  const target = event.target; //элемент, по которому кликнули мышью
 
-    /*closest поднимается выше по дереву в поисках элемента с заданным селектором
-    - нужно получить карточку ресторана*/
-    const restaurant = target.closest('.card-restaurant');
+  /*closest поднимается выше по дереву в поисках элемента с заданным селектором
+  - нужно получить карточку ресторана*/
+  const restaurant = target.closest('.card-restaurant');
 
-    //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
+  //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
   if (restaurant) {
-      
+
     if (login) { //открываем карточки меню только для авторизованного пользователя
-        cardsMenu.textContent = '';
+      cardsMenu.textContent = '';
 
-        //фактически на главной странице скрываем ненужные элементы и показываем нужные
-        containerPromo.classList.add('hide');
-        restaurants.classList.add('hide');
-        menu.classList.remove('hide');
+      //фактически на главной странице скрываем ненужные элементы и показываем нужные
+      containerPromo.classList.add('hide');
+      restaurants.classList.add('hide');
+      menu.classList.remove('hide');
 
-        //создаем карточки товаров в меню ресторана
-        createCardGood();
-        createCardGood();
-        createCardGood();
-      } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
-    }
-  
+      //создаем карточки товаров в меню ресторана
+      createCardGood();
+      createCardGood();
+      createCardGood();
+    } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
+  }
+
 }
 
 cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
@@ -212,3 +213,10 @@ checkAuth();
 createCardRestaurant();
 createCardRestaurant();
 createCardRestaurant();
+
+new Swiper('.swiper-container', {
+  loop: true,
+  autoplay: {
+    delay: 3000,
+  },
+})
