@@ -35,6 +35,7 @@ const getData = async function (url) {
     статус ошибки ${response.status}!`);
   }
   return await response.json();
+
 };
 
 getData("./db/partners.json");
@@ -226,9 +227,9 @@ function openGoods(event) {
         data.forEach(createCardGood); //для каждого объекта data выполняем функцию генерации карточки меню - 6 карточек
       });
 
-      //создаем карточки товаров в меню ресторана
-      createCardGood();
-    } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации
+
+
+    } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
   }
 }
 
