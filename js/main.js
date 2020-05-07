@@ -19,6 +19,12 @@ const menu = document.querySelector('.menu');
 const logo = document.querySelector('.logo');
 const footerLogo = document.querySelector('.footer-logo');
 const cardsMenu = document.querySelector('.cards-menu');
+const restaurantTitle = document.querySelector('.restaurant-title');
+const rating = document.querySelector('.rating');
+const price = document.querySelector('.price');
+const category = document.querySelector('.category');
+
+
 
 /*получаем данные из localStorage, если пользователь уже авторизован
 - на случай обновления страницы*/
@@ -161,7 +167,7 @@ function createCardRestaurant(restaurantData) {
       </div>              
     </a>
   `
-  console.log(products);
+
   //внедряем карточку внутрь элемента HTML (в конец) с классом cards-restaurants
   cardsRestaurants.insertAdjacentHTML('beforeend', card);
 }
@@ -182,7 +188,7 @@ function createCardGood(goodsData) {
   card.insertAdjacentHTML('beforeend', `
     <img
       src = "${image}"
-      alt = "image"
+      alt = "${name}"
       class = "card-image"
     />
     <div class = "card-text">
@@ -192,7 +198,7 @@ function createCardGood(goodsData) {
       <div class = "card-info">
         <div class = "ingredients">
           ${description} 
-          </div> 
+        </div> 
       </div>
       <div class = "card-buttons">
         <button class = "button button-primary button-add-cart">
@@ -226,6 +232,14 @@ function openGoods(event) {
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
       console.log(restaurant.dataset);
+
+
+      // restaurantTitle.textContent = '';
+      // rating.textContent = '';
+      // price.textContent = '';
+      // category.textContent = '';
+
+
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
       данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
       getData(`./db/${restaurant.dataset.products}`).then(function (data) {
@@ -281,3 +295,71 @@ function init() {
 }
 
 init();
+
+
+
+// inputSearch.addEventListener('keydown', function (event) {
+
+//         if (event.keyCode === 13) {
+//           const target = event.target;
+
+//           const value = target.value.toLowerCase().trim();
+
+//           target.value = '';
+
+//           if (!value || value.length < 3) {
+//             target.style.backgroundColor = 'tomato';
+//             setTimeout(function () {
+//               target.style.backgroundColor = '';
+//             }, 2000);
+//             return;
+//           }
+
+//           const goods = [];
+
+//           getData('./db/partners.json')
+//             .then(function (data) {
+
+//               const products = data.map(function (item) {
+//                 return item.products;
+//               });
+
+
+//               products.forEach(function (product) {
+//                 getData(`./db/${product}`)
+//                   .then(function (data) {
+
+//                     goods.push(...data);
+
+//                     const searchGoods = goods.filter(function (item) {
+//                       return item.name.toLowerCase().includes(value)
+//                     })
+
+//                     console.log(searchGoods);
+
+//                     cardsMenu.textContent = '';
+
+//                     containerPromo.classList.add('hide');
+//                     restaurants.classList.add('hide');
+//                     menu.classList.remove('hide');
+
+//                     restaurantTitle.textContent = 'Результат поиска';
+//                     rating.textContent = '';
+//                     minPrice.textContent = '';
+//                     category.textContent = '';
+
+//                     return searchGoods;
+//                   })
+//                   .then(function (data) {
+//                     data.forEach(createCardGood);
+//                   })
+//               })
+
+
+//             });
+
+
+
+//         }
+
+//       });
