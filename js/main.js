@@ -38,8 +38,8 @@ const getData = async function (url) {
   return await response.json();
 }
 
-getData('../db/partners.json');
-console.log(getData('../db/partners.json'));
+getData('./db/partners.json');
+console.log(getData('./db/partners.json'));
 
 
 
@@ -227,12 +227,9 @@ function openGoods(event) {
 
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
       данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
-      getData(`../db/${restaurant.dataset.products}`).then(function (data) {
+      getData(`./db/${restaurant.dataset.products}`).then(function (data) {
         data.forEach(createCardGood); //для каждого объекта data выполняем функцию генерации карточки меню - 6 карточек
       });
-
-      //создаем карточки товаров в меню ресторана
-      createCardGood();
 
     } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
   }
