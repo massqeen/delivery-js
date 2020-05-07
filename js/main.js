@@ -127,7 +127,7 @@ function checkAuth() {
   }
 }
 
-//создаем карточку с рестораном
+//создаем карточку с рестораном, данные получаем из функции getData
 function createCardRestaurant(restaurantData) {
 
   //деструктуризация данных restaurantData
@@ -161,7 +161,7 @@ function createCardRestaurant(restaurantData) {
       </div>              
     </a>
   `
-
+  console.log(products);
   //внедряем карточку внутрь элемента HTML (в конец) с классом cards-restaurants
   cardsRestaurants.insertAdjacentHTML('beforeend', card);
 }
@@ -225,7 +225,7 @@ function openGoods(event) {
       containerPromo.classList.add('hide');
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
-
+      console.log(restaurant.dataset);
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
       данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
       getData(`./db/${restaurant.dataset.products}`).then(function (data) {
@@ -237,11 +237,11 @@ function openGoods(event) {
 
 }
 
-//создали функцию инициализации (на случай если нужно перезапустить все скрипты)
+//создаем функцию инициализации (на случай если нужно перезапустить все скрипты)
 function init() {
 
   //обрабатываем полученный функцией promise с помощью then получаем массив с 6 объектами - data
-  getData('../db/partners.json').then(function (data) {
+  getData('./db/partners.json').then(function (data) {
     data.forEach(createCardRestaurant); //для каждого объекта data выполняем функцию генерации карточки - 6 карточек
   });
 
