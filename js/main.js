@@ -39,7 +39,7 @@ const getData = async function (url) {
 }
 
 getData('../db/partners.json');
-console.log(getData('../db/partners.json'));
+console.log(getData('./db/partners.json'));
 
 
 
@@ -230,9 +230,6 @@ function openGoods(event) {
       getData(`../db/${restaurant.dataset.products}`).then(function (data) {
         data.forEach(createCardGood); //для каждого объекта data выполняем функцию генерации карточки меню - 6 карточек
       });
-
-      //создаем карточки товаров в меню ресторана
-      createCardGood();
 
     } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
   }
