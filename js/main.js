@@ -38,7 +38,7 @@ const getData = async function (url) {
   return await response.json();
 }
 
-getData('../db/partners.json');
+getData('./db/partners.json');
 console.log(getData('./db/partners.json'));
 
 
