@@ -24,6 +24,25 @@ const cardsMenu = document.querySelector('.cards-menu');
 - на случай обновления страницы*/
 let login = localStorage.getItem('deliveryFood');
 
+//асинхронная функция запроса на сервер
+const getData = async function (url) {
+
+  //получаем результат c сервера по url
+  const response = await fetch(url);
+
+  //проверяем получение данных и скидываем ошибку если не true (не ок)
+  if (!response.ok) {
+    throw new Error(`Ошибка по адресу ${url}, 
+    статус ошибки ${response.status}!`);
+  }
+  return await response.json();
+}
+
+getData('../db/partners.json');
+console.log(getData('../db/partners.json'));
+
+
+
 const valid = function (str) { //идентично записи function valid(str) {}
   const nameReg = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/; //валидация имени пользователя
   return nameReg.test(str);
@@ -111,23 +130,35 @@ function checkAuth() {
 }
 
 //создаем карточку с рестораном
-function createCardRestaurant() {
+function createCardRestaurant(restaurantData) {
+
+  //деструктуризация данных restaurantData
+  const {
+    image,
+    kitchen,
+    name,
+    price,
+    products,
+    stars,
+    time_of_delivery: timeOfDelivery
+  } = restaurantData; //во время деструктуризации можно переименовывать данные - см. timeOfDelivery
+
   const card = `
-    <a href="#" class="card card-restaurant">
+    <a href="#" class="card card-restaurant" data-products="${products}">
       <img
-        src="img/pizza-plus/preview.jpg"
+        src="${image}"
         alt="image"
         class="card-image"
       />
       <div class="card-text">
         <div class="card-heading">
-          <h3 class="card-title">Пицца плюс</h3>
-          <span class="card-tag tag">50 мин</span>
+          <h3 class="card-title">${name}</h3>
+          <span class="card-tag tag">${timeOfDelivery} мин</span>
         </div>
         <div class="card-info">
-          <div class="rating">4.5</div>
-          <div class="price">От 900 ₽</div>
-          <div class="category">Пицца</div>
+          <div class="rating">${stars}</div>
+          <div class="price">От ${price} ₽</div>
+          <div class="category">${kitchen}</div>
         </div>                
       </div>              
     </a>
@@ -138,22 +169,31 @@ function createCardRestaurant() {
 }
 
 //создаем карточку товара в выбранном ресторане
-function createCardGood() {
+function createCardGood(goodsData) {
+
+  const {
+    name,
+    description,
+    price,
+    image,
+    id
+  } = goodsData;
+
   const card = document.createElement('div');
   card.className = 'card';
   card.insertAdjacentHTML('beforeend', `
     <img
-      src = "img/pizza-plus/pizza-vesuvius.jpg"
+      src = "${image}"
       alt = "image"
       class = "card-image"
     />
     <div class = "card-text">
       <div class = "card-heading">
-        <h3 class = "card-title card-title-reg" > Пицца Везувий </h3>
+        <h3 class = "card-title card-title-reg" > ${name} </h3>
       </div> 
       <div class = "card-info">
         <div class = "ingredients">
-          Соус томатный, сыр« Моцарелла», ветчина, пепперони, перец« Халапенье», соус« Тобаско», томаты. 
+          ${description} 
           </div> 
       </div>
       <div class = "card-buttons">
@@ -161,7 +201,7 @@ function createCardGood() {
           <span class = "button-card-text" > В корзину </span> 
           <span class = "button-cart-svg" > </span> 
         </button> 
-        <strong class = "card-price-bold"> 545₽ </strong> 
+        <strong class = "card-price-bold"> ${price}₽ </strong> 
       </div> 
     </div>         
   `);
@@ -188,47 +228,61 @@ function openGoods(event) {
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
 
+      /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
+      данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
+      getData(`../db/${restaurant.dataset.products}`).then(function (data) {
+        data.forEach(createCardGood); //для каждого объекта data выполняем функцию генерации карточки меню - 6 карточек
+      });
+
       //создаем карточки товаров в меню ресторана
       createCardGood();
-      createCardGood();
-      createCardGood();
+
     } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
   }
 
 }
 
-cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
+//создали функцию инициализации (на случай если нужно перезапустить все скрипты)
+function init() {
 
-close.addEventListener('click', toggleModal); //при клике на крестик закрываем окно корзины
+  //обрабатываем полученный функцией promise с помощью then получаем массив с 6 объектами - data
+  getData('../db/partners.json').then(function (data) {
+    data.forEach(createCardRestaurant); //для каждого объекта data выполняем функцию генерации карточки - 6 карточек
+  });
 
-//при клике на карточку ресторана открываем карточки с его меню
-cardsRestaurants.addEventListener('click', openGoods);
+  cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
 
-//возврат к главной странице по клику на лого в шапке
-logo.addEventListener('click', function () {
-  containerPromo.classList.remove('hide');
-  restaurants.classList.remove('hide');
-  menu.classList.add('hide');
-})
+  close.addEventListener('click', toggleModal); //при клике на крестик закрываем окно корзины
 
-//возврат к главной странице по клику на лого в футере
-footerLogo.addEventListener('click', function () {
-  containerPromo.classList.remove('hide');
-  restaurants.classList.remove('hide');
-  menu.classList.add('hide');
-})
+  //при клике на карточку ресторана открываем карточки с его меню
+  cardsRestaurants.addEventListener('click', openGoods);
 
-//первичный запуск функции для получения первого значения login
-checkAuth();
+  //возврат к главной странице по клику на лого в шапке
+  logo.addEventListener('click', function () {
+    containerPromo.classList.remove('hide');
+    restaurants.classList.remove('hide');
+    menu.classList.add('hide');
+  })
 
-//рендерим карточки ресторанов
-createCardRestaurant();
-createCardRestaurant();
-createCardRestaurant();
+  //возврат к главной странице по клику на лого в футере
+  footerLogo.addEventListener('click', function () {
+    containerPromo.classList.remove('hide');
+    restaurants.classList.remove('hide');
+    menu.classList.add('hide');
+  })
 
-new Swiper('.swiper-container', {
-  loop: true,
-  autoplay: {
-    delay: 3000,
-  },
-})
+  //первичный запуск функции для получения первого значения login
+  checkAuth();
+
+  //рендерим карточки ресторанов
+
+
+  new Swiper('.swiper-container', {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+    },
+  })
+}
+
+init();
