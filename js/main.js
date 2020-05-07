@@ -241,7 +241,7 @@ function openGoods(event) {
 function init() {
 
   //обрабатываем полученный функцией promise с помощью then получаем массив с 6 объектами - data
-  getData('../db/partners.json').then(function (data) {
+  getData('./db/partners.json').then(function (data) {
     data.forEach(createCardRestaurant); //для каждого объекта data выполняем функцию генерации карточки - 6 карточек
   });
 
