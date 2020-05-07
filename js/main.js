@@ -21,7 +21,7 @@ const footerLogo = document.querySelector('.footer-logo');
 const cardsMenu = document.querySelector('.cards-menu');
 const restaurantTitle = document.querySelector('.restaurant-title');
 const rating = document.querySelector('.rating');
-const price = document.querySelector('.price');
+const minPrice = document.querySelector('.price');
 const category = document.querySelector('.category');
 
 
@@ -148,7 +148,10 @@ function createCardRestaurant(restaurantData) {
   } = restaurantData; //во время деструктуризации можно переименовывать данные - см. timeOfDelivery
 
   const card = `
-    <a href="#" class="card card-restaurant" data-products="${products}">
+    <a href="#" class="card card-restaurant"
+      data-products="${products}" 
+      data-restaurant-info = "${[name, price, stars, kitchen]}"
+      >
       <img
         src="${image}"
         alt="image"
@@ -224,20 +227,26 @@ function openGoods(event) {
   //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
   if (restaurant) {
 
+
     if (login) { //открываем карточки меню только для авторизованного пользователя
+
+      const info = restaurant.dataset.restaurantInfo.split(',');
+      const [name, price, stars, kitchen] = info;
+
+
+
       cardsMenu.textContent = '';
 
       //фактически на главной странице скрываем ненужные элементы и показываем нужные
       containerPromo.classList.add('hide');
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
-      console.log(restaurant.dataset);
 
 
-      // restaurantTitle.textContent = '';
-      // rating.textContent = '';
-      // price.textContent = '';
-      // category.textContent = '';
+      restaurantTitle.textContent = name;
+      rating.textContent = stars;
+      minPrice.textContent = `От ${price} ₽`;
+      category.textContent = kitchen;
 
 
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
