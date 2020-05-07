@@ -82,10 +82,11 @@ function notAuthorized() {
     }
   }
 
+
   buttonAuth.addEventListener('click', toggleModalAuth); //выводим окно авторизации при клике на кнопку Войти
   closeAuth.addEventListener('click', toggleModalAuth); //закрываем окно авторизации при клике на крестик
   logInForm.addEventListener('submit', logIn); //авторизуем пользователя и выполняем функцию logIn
-  cardsRestaurants.addEventListener('click', openMenu);
+
 }
 
 //возврат к списку ресторанов - на случай logout пользователя на странице меню
