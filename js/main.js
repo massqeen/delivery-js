@@ -147,32 +147,34 @@ function createCardRestaurant(restaurantData) {
     time_of_delivery: timeOfDelivery
   } = restaurantData; //во время деструктуризации можно переименовывать данные - см. timeOfDelivery
 
-  const card = `
-    <a href="#" class="card card-restaurant"
-      data-products="${products}" 
-      data-restaurant-info = "${[name, price, stars, kitchen]}"
-      >
-      <img
-        src="${image}"
-        alt="image"
-        class="card-image"
-      />
-      <div class="card-text">
-        <div class="card-heading">
-          <h3 class="card-title">${name}</h3>
-          <span class="card-tag tag">${timeOfDelivery} мин</span>
-        </div>
-        <div class="card-info">
-          <div class="rating">${stars}</div>
-          <div class="price">От ${price} ₽</div>
-          <div class="category">${kitchen}</div>
-        </div>                
-      </div>              
-    </a>
-  `
+  const card = document.createElement('a');
+  card.classList.add('card');
+  card.classList.add('card-restaurant');
+  card.products = products; //создаем свойство products со значениями products.json
+  card.restaurantInfo = [name, price, stars, kitchen];
+
+
+  card.insertAdjacentHTML('beforeend', `    
+    <img
+      src="${image}"
+      alt="image"
+      class="card-image"
+    />
+    <div class="card-text">
+      <div class="card-heading">
+        <h3 class="card-title">${name}</h3>
+        <span class="card-tag tag">${timeOfDelivery} мин</span>
+      </div>
+      <div class="card-info">
+        <div class="rating">${stars}</div>
+        <div class="price">От ${price} ₽</div>
+        <div class="category">${kitchen}</div>
+      </div>                
+    </div>    
+  `);
 
   //внедряем карточку внутрь элемента HTML (в конец) с классом cards-restaurants
-  cardsRestaurants.insertAdjacentHTML('beforeend', card);
+  cardsRestaurants.insertAdjacentElement('beforeend', card);
 }
 
 //создаем карточку товара в выбранном ресторане
@@ -222,6 +224,8 @@ function openGoods(event) {
 
   /*closest поднимается выше по дереву в поисках элемента с заданным селектором
   - нужно получить карточку ресторана*/
+
+
   const restaurant = target.closest('.card-restaurant');
 
   //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
@@ -230,8 +234,8 @@ function openGoods(event) {
 
     if (login) { //открываем карточки меню только для авторизованного пользователя
 
-      const info = restaurant.dataset.restaurantInfo.split(',');
-      const [name, price, stars, kitchen] = info;
+      // const restaurantInfo = restaurant.dataset.restaurantInfo.split(',');
+      const [name, price, stars, kitchen] = restaurant.restaurantInfo;
 
 
 
@@ -251,7 +255,7 @@ function openGoods(event) {
 
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
       данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
-      getData(`./db/${restaurant.dataset.products}`).then(function (data) {
+      getData(`./db/${restaurant.products}`).then(function (data) {
         data.forEach(createCardGood); //для каждого объекта data выполняем функцию генерации карточки меню - 6 карточек
       });
 
