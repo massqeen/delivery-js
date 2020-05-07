@@ -82,9 +82,6 @@ function notAuthorized() {
     }
   }
 
-  function openMenu(event) {
-    console.log('test');
-  }
   buttonAuth.addEventListener('click', toggleModalAuth); //выводим окно авторизации при клике на кнопку Войти
   closeAuth.addEventListener('click', toggleModalAuth); //закрываем окно авторизации при клике на крестик
   logInForm.addEventListener('submit', logIn); //авторизуем пользователя и выполняем функцию logIn
@@ -177,7 +174,7 @@ function createCardGood(goodsData) {
     price,
     image,
     id
-  } = goodsData;
+  } = goodsData
 
   const card = document.createElement('div');
   card.className = 'card';
@@ -189,7 +186,7 @@ function createCardGood(goodsData) {
     />
     <div class = "card-text">
       <div class = "card-heading">
-        <h3 class = "card-title card-title-reg" > ${name} </h3>
+        <h3 class = "card-title card-title-reg">${name}</h3>
       </div> 
       <div class = "card-info">
         <div class = "ingredients">
@@ -198,10 +195,10 @@ function createCardGood(goodsData) {
       </div>
       <div class = "card-buttons">
         <button class = "button button-primary button-add-cart">
-          <span class = "button-card-text" > В корзину </span> 
-          <span class = "button-cart-svg" > </span> 
+          <span class = "button-card-text">В корзину</span> 
+          <span class = "button-cart-svg"></span> 
         </button> 
-        <strong class = "card-price-bold"> ${price}₽ </strong> 
+        <strong class = "card-price-bold">${price}₽</strong> 
       </div> 
     </div>         
   `);
