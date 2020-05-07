@@ -19,6 +19,13 @@ const menu = document.querySelector('.menu');
 const logo = document.querySelector('.logo');
 const footerLogo = document.querySelector('.footer-logo');
 const cardsMenu = document.querySelector('.cards-menu');
+const restaurantTitle = document.querySelector('.restaurant-title');
+const rating = document.querySelector('.rating');
+const minPrice = document.querySelector('.price');
+const category = document.querySelector('.category');
+const inputSearch = document.querySelector('.input-search');
+
+
 
 /*получаем данные из localStorage, если пользователь уже авторизован
 - на случай обновления страницы*/
@@ -127,7 +134,7 @@ function checkAuth() {
   }
 }
 
-//создаем карточку с рестораном
+//создаем карточку с рестораном, данные получаем из функции getData
 function createCardRestaurant(restaurantData) {
 
   //деструктуризация данных restaurantData
@@ -142,7 +149,10 @@ function createCardRestaurant(restaurantData) {
   } = restaurantData; //во время деструктуризации можно переименовывать данные - см. timeOfDelivery
 
   const card = `
-    <a href="#" class="card card-restaurant" data-products="${products}">
+    <a href="#" class="card card-restaurant"
+      data-products="${products}" 
+      data-restaurant-info = "${[name, price, stars, kitchen]}"
+      >
       <img
         src="${image}"
         alt="image"
@@ -182,7 +192,7 @@ function createCardGood(goodsData) {
   card.insertAdjacentHTML('beforeend', `
     <img
       src = "${image}"
-      alt = "image"
+      alt = "${name}"
       class = "card-image"
     />
     <div class = "card-text">
@@ -192,7 +202,7 @@ function createCardGood(goodsData) {
       <div class = "card-info">
         <div class = "ingredients">
           ${description} 
-          </div> 
+        </div> 
       </div>
       <div class = "card-buttons">
         <button class = "button button-primary button-add-cart">
@@ -218,13 +228,27 @@ function openGoods(event) {
   //проверяем, юыл ли клик на элементах карточки ресторана (не пустое значение)
   if (restaurant) {
 
+
     if (login) { //открываем карточки меню только для авторизованного пользователя
+
+      const info = restaurant.dataset.restaurantInfo.split(',');
+      const [name, price, stars, kitchen] = info;
+
+
+
       cardsMenu.textContent = '';
 
       //фактически на главной странице скрываем ненужные элементы и показываем нужные
       containerPromo.classList.add('hide');
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
+
+
+      restaurantTitle.textContent = name;
+      rating.textContent = stars;
+      minPrice.textContent = `От ${price} ₽`;
+      category.textContent = kitchen;
+
 
       /*получаем дынные из объекта dataset (содержит все data-атрибуты) - 
       данные о продуктах записаны в карточке ресторана в атрибуте data - products*/
@@ -237,7 +261,68 @@ function openGoods(event) {
 
 }
 
-//создали функцию инициализации (на случай если нужно перезапустить все скрипты)
+//создаем функцию поиска для поля Поиск блюд и ресторанов
+function searchRestaurants(event) {
+
+  if (event.keyCode === 13) {
+    const target = event.target;
+    const value = target.value.toLowerCase().trim();
+    target.value = '';
+
+    if (!value || value.length < 3) {
+      target.style.backgroundColor = 'tomato';
+      setTimeout(function () {
+        target.style.backgroundColor = '';
+      }, 2000);
+      return;
+    }
+
+    const goods = [];
+
+    getData('./db/partners.json')
+      .then(function (data) {
+
+        const products = data.map(function (item) {
+          return item.products;
+        });
+
+
+        products.forEach(function (product) {
+          getData(`./db/${product}`)
+            .then(function (data) {
+
+              goods.push(...data);
+
+              const searchGoods = goods.filter(function (item) {
+                return item.name.toLowerCase().includes(value)
+              })
+
+              console.log(searchGoods);
+
+              cardsMenu.textContent = '';
+
+              containerPromo.classList.add('hide');
+              restaurants.classList.add('hide');
+              menu.classList.remove('hide');
+
+              restaurantTitle.textContent = 'Результат поиска';
+              rating.textContent = '';
+              minPrice.textContent = '';
+              category.textContent = '';
+
+              return searchGoods;
+            })
+            .then(function (data) {
+              data.forEach(createCardGood);
+            })
+        })
+      });
+  }
+}
+
+
+
+//создаем функцию инициализации (на случай если нужно перезапустить все скрипты)
 function init() {
 
   //обрабатываем полученный функцией promise с помощью then получаем массив с 6 объектами - data
@@ -269,9 +354,14 @@ function init() {
   //первичный запуск функции для получения первого значения login
   checkAuth();
 
-  //рендерим карточки ресторанов
+
+  //поиск ресторанов и меню на главной странице
+  inputSearch.addEventListener('keydown', searchRestaurants);
 
 
+
+
+  //настраиваем и запускаем промо-слайдер
   new Swiper('.swiper-container', {
     loop: true,
     autoplay: {
