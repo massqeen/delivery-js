@@ -30,6 +30,20 @@ const buttonClearCart = document.querySelector('.clear-cart')
 
 const cart = [];
 
+//загрузка корзины из local storage для логина
+const loadCart = function () {
+  if (localStorage.getItem(login + '')) {
+    JSON.parse(localStorage.getItem(login)).forEach(function (item) {
+      cart.push(item);
+    })
+  }
+}
+
+//добавление содержимого корзины в local storage
+const saveCart = function () {
+  localStorage.setItem(login, JSON.stringify(cart))
+}
+
 /*получаем данные из localStorage, если пользователь уже авторизован
 - на случай обновления страницы*/
 let login = localStorage.getItem('deliveryFood');
@@ -50,8 +64,6 @@ const getData = async function (url) {
 
 getData('./db/partners.json');
 console.log(getData('./db/partners.json'));
-
-
 
 const valid = function (str) { //идентично записи function valid(str) {}
   const nameReg = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/; //валидация имени пользователя
@@ -92,7 +104,6 @@ function notAuthorized() {
     }
   }
 
-
   buttonAuth.addEventListener('click', toggleModalAuth); //выводим окно авторизации при клике на кнопку Войти
   closeAuth.addEventListener('click', toggleModalAuth); //закрываем окно авторизации при клике на крестик
   logInForm.addEventListener('submit', logIn); //авторизуем пользователя и выполняем функцию logIn
@@ -128,6 +139,9 @@ function authorized() {
   buttonOut.style.display = 'flex'; //выводим кнопку выхода в шапку
   buttonOut.addEventListener('click', logOut); //запускаем функцию выхода при клике на кнопку
   cartButton.style.display = 'flex'; //выводим кнопку коризны в шапку
+
+  //добавляем содержимое корзины в local storage
+  loadCart();
 }
 
 //проверяем состояние авторизации в зависимости от значения login
@@ -240,15 +254,12 @@ function openGoods(event) {
       const info = restaurant.dataset.restaurantInfo.split(',');
       const [name, price, stars, kitchen] = info;
 
-
-
       cardsMenu.textContent = '';
 
       //фактически на главной странице скрываем ненужные элементы и показываем нужные
       containerPromo.classList.add('hide');
       restaurants.classList.add('hide');
       menu.classList.remove('hide');
-
 
       restaurantTitle.textContent = name;
       rating.textContent = stars;
@@ -264,7 +275,6 @@ function openGoods(event) {
 
     } else toggleModalAuth(); //если пользователь не авторизован выводим окно авторизации    
   }
-
 }
 
 //создаем функцию поиска для поля Поиск блюд и ресторанов
@@ -291,7 +301,6 @@ function searchRestaurants(event) {
         const products = data.map(function (item) {
           return item.products;
         });
-
 
         products.forEach(function (product) {
           getData(`./db/${product}`)
@@ -357,9 +366,10 @@ function addToCart(event) {
         count: 1
       });
     }
-
-
   }
+
+  //сохраняем содержимое корзины в local storage
+  saveCart();
 }
 
 //формируем список товаров, добавленных в корзину
@@ -401,7 +411,6 @@ function renderCart() {
 function changeCount(event) {
   const target = event.target;
 
-
   if (target.classList.contains('counter-button')) {
     const food = cart.find(function (item) {
       return item.id === target.dataset.id;
@@ -416,12 +425,9 @@ function changeCount(event) {
 
     renderCart();
   }
+  //при изменении содержимого корзины сохраняем в local storage
+  saveCart();
 }
-
-
-
-
-
 
 //создаем функцию инициализации (на случай если нужно перезапустить все скрипты)
 function init() {
@@ -472,9 +478,6 @@ function init() {
 
   //поиск ресторанов и меню на главной странице
   inputSearch.addEventListener('keydown', searchRestaurants);
-
-
-
 
   //настраиваем и запускаем промо-слайдер
   new Swiper('.swiper-container', {
