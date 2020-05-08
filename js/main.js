@@ -24,8 +24,11 @@ const rating = document.querySelector('.rating');
 const minPrice = document.querySelector('.price');
 const category = document.querySelector('.category');
 const inputSearch = document.querySelector('.input-search');
+const modalBody = document.querySelector('.modal-body');
+const modalPrice = document.querySelector('.modal-pricetag');
+const buttonClearCart = document.querySelector('.clear-cart')
 
-
+const cart = [];
 
 /*получаем данные из localStorage, если пользователь уже авторизован
 - на случай обновления страницы*/
@@ -112,6 +115,7 @@ function authorized() {
     buttonAuth.style.display = '';
     userName.style.display = '';
     buttonOut.style.display = '';
+    cartButton.style.display = '';
     buttonOut.removeEventListener('click', logOut);
     logInForm.reset(); //удаляем заполненные данные формы
     checkAuth();
@@ -121,8 +125,9 @@ function authorized() {
   userName.textContent = login; //выводим в элемент .user-name значение login - для отображение имени пользователя в шапке
   buttonAuth.style.display = 'none'; //убираем кнопку логина для авторизованного пользователя
   userName.style.display = 'inline-block'; //выводим логин в шапку
-  buttonOut.style.display = 'block'; //выводим кнопку выхода в шапку
+  buttonOut.style.display = 'flex'; //выводим кнопку выхода в шапку
   buttonOut.addEventListener('click', logOut); //запускаем функцию выхода при клике на кнопку
+  cartButton.style.display = 'flex'; //выводим кнопку коризны в шапку
 }
 
 //проверяем состояние авторизации в зависимости от значения login
@@ -205,11 +210,12 @@ function createCardGood(goodsData) {
         </div> 
       </div>
       <div class = "card-buttons">
-        <button class = "button button-primary button-add-cart">
+        <button class = "button button-primary button-add-cart" id="${id}">
           <span class = "button-card-text">В корзину</span> 
           <span class = "button-cart-svg"></span> 
         </button> 
-        <strong class = "card-price-bold">${price}₽</strong> 
+        <strong class = "card-price card-price-bold">${price}₽ 
+        </strong> 
       </div> 
     </div>         
   `);
@@ -320,6 +326,101 @@ function searchRestaurants(event) {
   }
 }
 
+function addToCart(event) {
+
+  const target = event.target; //событие клика выводим в переменную target
+  const buttonAddToCard = target.closest('.button-add-cart'); //получаем кнопку при клике на любой элемент кнопки
+
+  if (buttonAddToCard) {
+    // получаем карточку товара, соответствующего нажатой кнопке
+    const card = target.closest('.card');
+
+    //внутри полученной карточки получаем название и цену (в виде текста, а не элемента!)для передачи в корзину
+    const title = card.querySelector('.card-title-reg').textContent;
+    const cost = card.querySelector('.card-price').textContent;
+
+    //получаем id кнопки добавления товара из карточки
+    const id = buttonAddToCard.id;
+
+    //проверяем, есть ли уже в массиве cart товар с искомым id, если есть увеличиваем count на 1
+    const food = cart.find(function (item) {
+      return item.id === id;
+    })
+    if (food) {
+      food.count += 1;
+    } else {
+      //отправляем полученные данные в переменную cart в виде массива
+      cart.push({
+        id,
+        title,
+        cost,
+        count: 1
+      });
+    }
+
+
+  }
+}
+
+//формируем список товаров, добавленных в корзину
+function renderCart() {
+
+  //очищаем корзину при ее запуске
+  modalBody.textContent = '';
+
+  //генерируем строки с товарами
+  cart.forEach(function ({
+    id,
+    title,
+    cost,
+    count
+  }) {
+    const itemCart = `
+      <div class = "food-row">
+        <span class = "food-name">${title}</span> 
+        <strong class = "food-price">${cost}</strong>
+        <div class = "food-counter">
+          <button class = "counter-button counter-minus" data-id="${id}">-</button>
+          <span class = "counter">${count}</span>
+          <button class = "counter-button counter-plus" data-id="${id}">+</button>
+        </div> 
+      </div>
+    `;
+    modalBody.insertAdjacentHTML('beforeend', itemCart);
+  });
+
+  //считаем общую сумму покупки
+  const totalPrice = cart.reduce(function (result, item) {
+    return result + (parseFloat(item.cost) * item.count);
+  }, 0);
+
+  modalPrice.textContent = totalPrice + ' ₽';
+}
+
+//меняем количество товаров в корзине по щелчку на + или -
+function changeCount(event) {
+  const target = event.target;
+
+
+  if (target.classList.contains('counter-button')) {
+    const food = cart.find(function (item) {
+      return item.id === target.dataset.id;
+    });
+    if (target.classList.contains('counter-minus')) {
+      food.count--;
+      if (food.count === 0) {
+        cart.splice(cart.indexOf(food), 1); //удаляем из списка корзины элемент с количеством 0
+      }
+    }
+    if (target.classList.contains('counter-plus')) food.count++;
+
+    renderCart();
+  }
+}
+
+
+
+
 
 
 //создаем функцию инициализации (на случай если нужно перезапустить все скрипты)
@@ -330,7 +431,21 @@ function init() {
     data.forEach(createCardRestaurant); //для каждого объекта data выполняем функцию генерации карточки - 6 карточек
   });
 
-  cartButton.addEventListener('click', toggleModal); //при клике на корзину открываем модальное окно
+  cartButton.addEventListener('click', function () {
+    renderCart(); //формируем список товаров в корзине
+    toggleModal(); //при клике на корзину открываем модальное окно
+  });
+
+  //меняем количество товаров в корзине по щелчку на + или -
+  modalBody.addEventListener('click', changeCount);
+
+  cardsMenu.addEventListener('click', addToCart); // при клике на карточку меню запускаем функцию добавления товара в корзину
+
+  //очищаем корзину при нажатии Отмена - делаем длину массива 0
+  buttonClearCart.addEventListener('click', function () {
+    cart.length = 0;
+    renderCart();
+  })
 
   close.addEventListener('click', toggleModal); //при клике на крестик закрываем окно корзины
 
