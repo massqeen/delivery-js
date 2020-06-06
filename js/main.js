@@ -26,7 +26,7 @@ const category = document.querySelector('.category');
 const inputSearch = document.querySelector('.input-search');
 const modalBody = document.querySelector('.modal-body');
 const modalPrice = document.querySelector('.modal-pricetag');
-const buttonClearCart = document.querySelector('.clear-cart')
+const buttonClearCart = document.querySelector('.clear-cart');
 
 const cart = [];
 
@@ -35,14 +35,14 @@ const loadCart = function () {
   if (localStorage.getItem(login + '')) {
     JSON.parse(localStorage.getItem(login)).forEach(function (item) {
       cart.push(item);
-    })
+    });
   }
-}
+};
 
 //добавление содержимого корзины в local storage
 const saveCart = function () {
-  localStorage.setItem(login, JSON.stringify(cart))
-}
+  localStorage.setItem(login, JSON.stringify(cart));
+};
 
 /*получаем данные из localStorage, если пользователь уже авторизован
 - на случай обновления страницы*/
@@ -60,7 +60,7 @@ const getData = async function (url) {
     статус ошибки ${response.status}!`);
   }
   return await response.json();
-}
+};
 
 getData('./db/partners.json');
 console.log(getData('./db/partners.json'));
@@ -68,7 +68,7 @@ console.log(getData('./db/partners.json'));
 const valid = function (str) { //идентично записи function valid(str) {}
   const nameReg = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/; //валидация имени пользователя
   return nameReg.test(str);
-}
+};
 
 //выводим на экран модальное окно корзины
 function toggleModal() {
@@ -189,7 +189,7 @@ function createCardRestaurant(restaurantData) {
         </div>                
       </div>              
     </a>
-  `
+  `;
 
   //внедряем карточку внутрь элемента HTML (в конец) с классом cards-restaurants
   cardsRestaurants.insertAdjacentHTML('beforeend', card);
@@ -204,7 +204,7 @@ function createCardGood(goodsData) {
     price,
     image,
     id
-  } = goodsData
+  } = goodsData;
 
   const card = document.createElement('div');
   card.className = 'card';
@@ -309,8 +309,8 @@ function searchRestaurants(event) {
               goods.push(...data);
 
               const searchGoods = goods.filter(function (item) {
-                return item.name.toLowerCase().includes(value)
-              })
+                return item.name.toLowerCase().includes(value);
+              });
 
               console.log(searchGoods);
 
@@ -329,8 +329,8 @@ function searchRestaurants(event) {
             })
             .then(function (data) {
               data.forEach(createCardGood);
-            })
-        })
+            });
+        });
       });
   }
 }
@@ -354,7 +354,7 @@ function addToCart(event) {
     //проверяем, есть ли уже в массиве cart товар с искомым id, если есть увеличиваем count на 1
     const food = cart.find(function (item) {
       return item.id === id;
-    })
+    });
     if (food) {
       food.count += 1;
     } else {
@@ -451,7 +451,7 @@ function init() {
   buttonClearCart.addEventListener('click', function () {
     cart.length = 0;
     renderCart();
-  })
+  });
 
   close.addEventListener('click', toggleModal); //при клике на крестик закрываем окно корзины
 
@@ -463,14 +463,14 @@ function init() {
     containerPromo.classList.remove('hide');
     restaurants.classList.remove('hide');
     menu.classList.add('hide');
-  })
+  });
 
   //возврат к главной странице по клику на лого в футере
   footerLogo.addEventListener('click', function () {
     containerPromo.classList.remove('hide');
     restaurants.classList.remove('hide');
     menu.classList.add('hide');
-  })
+  });
 
   //первичный запуск функции для получения первого значения login
   checkAuth();
@@ -485,7 +485,7 @@ function init() {
     autoplay: {
       delay: 3000,
     },
-  })
+  });
 }
 
 init();
